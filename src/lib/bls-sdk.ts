@@ -60,7 +60,7 @@ const poly_sizes_by_threshold = [
 // Encoding conversions
 
 // modified from https://stackoverflow.com/a/11058858
-function asciiToUint8Array(a) {
+function asciiToUint8Array(a: string): Uint8Array {
   let b = new Uint8Array(a.length);
   for (let i = 0; i < a.length; i++) {
     b[i] = a.charCodeAt(i);
@@ -69,20 +69,20 @@ function asciiToUint8Array(a) {
 }
 // https://stackoverflow.com/a/19102224
 // TODO resolve RangeError possibility here, see SO comments
-function uint8ArrayToAscii(a) {
+function uint8ArrayToAscii(a: string): Uint8Array {
   return String.fromCharCode.apply(null, a);
 }
 // https://stackoverflow.com/a/50868276
-function hexToUint8Array(h) {
+function hexToUint8Array(h: string): Uint8Array {
   if (h.length == 0) {
     return new Uint8Array();
   }
   return new Uint8Array(h.match(/.{1,2}/g).map((byte) => parseInt(byte, 16)));
 }
-function uint8ArrayToHex(a) {
+function uint8ArrayToHex(a: Uint8Array): string {
   return a.reduce((str, byte) => str + byte.toString(16).padStart(2, "0"), "");
 }
-function uint8ArrayToByteStr(a) {
+function uint8ArrayToByteStr(a: Uint8Array): string {
   return "[" + a.join(", ") + "]";
 }
 
@@ -213,7 +213,7 @@ const base64codes = [
   33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51,
 ];
 
-function getBase64Code(charCode) {
+function getBase64Code(charCode: number): number {
   if (charCode >= base64codes.length) {
     throw new Error("Unable to parse base64 string.");
   }
@@ -224,7 +224,7 @@ function getBase64Code(charCode) {
   return code;
 }
 
-export function uint8ArrayToBase64(bytes) {
+export function uint8ArrayToBase64(bytes): string {
   let result = "",
     i,
     l = bytes.length;
@@ -250,7 +250,7 @@ export function uint8ArrayToBase64(bytes) {
   return result;
 }
 
-export function base64ToUint8Array(str) {
+export function base64ToUint8Array(str): Uint8Array {
   if (str.length % 4 !== 0) {
     throw new Error("Unable to parse base64 string.");
   }
@@ -622,7 +622,7 @@ export const wasmBlsSdkHelpers = new (function () {
   };
 })();
 
-let wasm;
+let wasm: WebAssembly.Exports;
 
 let cachedTextDecoder = new TextDecoder("utf-8", {
   ignoreBOM: true,
@@ -631,8 +631,8 @@ let cachedTextDecoder = new TextDecoder("utf-8", {
 
 cachedTextDecoder.decode();
 
-let cachegetUint8Memory0 = null;
-function getUint8Memory0() {
+let cachegetUint8Memory0: Uint8Array | null = null;
+function getUint8Memory0(): Uint8Array {
   if (
     cachegetUint8Memory0 === null ||
     cachegetUint8Memory0.buffer !== wasm.memory.buffer
@@ -642,7 +642,7 @@ function getUint8Memory0() {
   return cachegetUint8Memory0;
 }
 
-function getStringFromWasm0(ptr, len) {
+function getStringFromWasm0(ptr: number, len: number): string {
   return cachedTextDecoder.decode(getUint8Memory0().subarray(ptr, ptr + len));
 }
 /**

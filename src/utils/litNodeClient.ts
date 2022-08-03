@@ -2,7 +2,6 @@ import {
   fromString as uint8arrayFromString,
   toString as uint8arrayToString,
 } from "uint8arrays";
-import naclUtil from "tweetnacl-util";
 
 import { version } from "../version";
 
@@ -26,57 +25,7 @@ import {
   canonicalResourceIdFormatter,
   canonicalUnifiedAccessControlConditionFormatter,
 } from "./crypto";
-
-/**
- * @typedef {Object} AccessControlCondition
- * @property {string} contractAddress - The address of the contract that will be queried
- * @property {string} chain - The chain name of the chain that this contract is deployed on.  See LIT_CHAINS for currently supported chains.
- * @property {string} standardContractType - If the contract is an ERC20, ERC721, or ERC1155, please put that here
- * @property {string} method - The smart contract function to call
- * @property {Array} parameters - The parameters to use when calling the smart contract.  You can use the special ":userAddress" parameter which will be replaced with the requesting user's wallet address, verified via message signature
- * @property {Object} returnValueTest - An object containing two keys: "comparator" and "value".  The return value of the smart contract function will be compared against these.  For example, to check if someone holds an NFT, you could use "comparator: >" and "value: 0" which would check that a user has a token balance greater than zero.
- */
-
-/**
- * @typedef {Object} EVMContractCondition
- * @property {string} contractAddress - The address of the contract that will be queried
- * @property {string} chain - The chain name of the chain that this contract is deployed on.  See LIT_CHAINS for currently supported chains.
- * @property {string} functionName - The smart contract function to call
- * @property {Array} functionParams - The parameters to use when calling the smart contract.  You can use the special ":userAddress" parameter which will be replaced with the requesting user's wallet address, verified via message signature
- * @property {Object} functionAbi - The ABI of the smart contract function to call.  This is used to encode the function parameters and decode the return value of the function.  Do not pass the entire contract ABI here.  Instead, find the function you want to call in the contract ABI and pass that function's ABI here.
- * @property {Object} returnValueTest - An object containing three keys: "key", "comparator" and "value".  The return value of the smart contract function will be compared against these.  For example, to check if someone holds an NFT, you could use "key": "", "comparator: >" and "value: 0" which would check that a user has a token balance greater than zero.  The "key" is used when the return value is a struct which contains multiple values and should be the name of the returned value from the function abi.  You must always pass "key" when using "returnValueTest", even if you pass an empty string for it, because the function only returns a single value.
- */
-
-/**
- * @typedef {Object} SolRpcCondition
- * @property {string} method - The Solana RPC method to be called.  You can find a list here: https://docs.solana.com/developing/clients/jsonrpc-api
- * @property {Array} params - The parameters to use when making the RPC call.  You can use the special ":userAddress" parameter which will be replaced with the requesting user's wallet address, verified via message signature
- * @property {string} chain - The chain name of the chain that this contract is deployed on.  See ALL_LIT_CHAINS for currently supported chains.  On Solana, we support "solana" for mainnet, "solanaDevnet" for devnet and "solanaTestnet" for testnet.
- * @property {Object} returnValueTest - An object containing three keys: "key", "comparator" and "value".  The return value of the rpc call will be compared against these.  The "key" selector supports JSONPath syntax, so you can filter and iterate over the results.  For example, to check if someone holds an NFT with address 29G6GSKNGP8K6ATy65QrNZk4rNgsZX1sttvb5iLXWDcE, you could use "method": "GetTokenAccountsByOwner", "params": [":userAddress",{"programId":"TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"},{"encoding":"jsonParsed"}], "key": "$[?(@.account.data.parsed.info.mint == "29G6GSKNGP8K6ATy65QrNZk4rNgsZX1sttvb5iLXWDcE")].account.data.parsed.info.tokenAmount.amount", "comparator: >" and "value: 0" which would check that a user has a token balance greater than zero.  The "key" is used when the return value is an array or object which contains multiple values and should be the name of the returned value or a JSONPath item.  You must always pass "key" when using "returnValueTest", even if you pass an empty string for it, because the rpc call only returns a single value.
- */
-
-/**
- * @typedef {Object} CosmosCondition
- * @property {string} path - The RPC URL path that will be called.  This will typically contain any parameters you need for the call.  Note that you can use the special ":userAddress" parameter which will be replaced with the requesting user's wallet address, verified via message signature.  For example, this path would be used to get the requesting user's balance: "/cosmos/bank/v1beta1/balances/:userAddress"
- * @property {string} chain - The chain name of the chain that this contract is deployed on.  See ALL_LIT_CHAINS for currently supported chains.  On Cosmos we currently support "cosmos" and "kyve"
- * @property {Object} returnValueTest - An object containing three keys: "key", "comparator" and "value".  The return value of the rpc call will be compared against these.  The "key" selector supports JSONPath syntax, so you can filter and iterate over the results.  For example, to check the balance of someone's account, you can use the key "$.balances[0].amount" which will pull out balances[0].amount from the JSON response and compare it against the "value" field according to the "comparator".  The "key" is used when the return value is an array or object which contains multiple values and should be the name of the returned value or a JSONPath item.  You must always pass "key" when using "returnValueTest", even if you pass an empty string for it, because the rpc call only returns a single value.
- */
-
-/**
- * @typedef {Object} ResourceId
- * @property {string} baseUrl - The base url of the resource that will be authorized
- * @property {string} path - The path of the url of the resource that will be authorized
- * @property {string} orgId - The org id that the user would be authorized to belong to.  The orgId key must be present but it may contain an empty string if you don't need to store anything in it.
- * @property {string} role - The role that the user would be authorized to have.  The role key must be present but it may contain an empty string if you don't need to store anything in it.
- * @property {string} extraData - Any extra data you may want to store.  You may store stringified JSON in here, for example.  The extraData key must be present but it may contain an empty string if you don't need to store anything in it.
- */
-
-/**
- * @typedef {Object} CallRequest
- * @property {string} to - The address of the contract that will be queried
- * @property {string} from - Optional.  The address calling the function.
- * @property {string} data - Hex encoded data to send to the contract.
- */
+import { CallRequest, LitNodeClientConfig } from "./types";
 
 /**
  * A LIT node client.  Connects directly to the LIT nodes to store and retrieve encryption keys and signing requests.  Only holders of an NFT that corresponds with a LIT may store and retrieve the keys.
@@ -86,7 +35,17 @@ import {
  * @param {boolean} [config.debug=true] Whether or not to show debug messages.
  */
 export default class LitNodeClient {
-  constructor(config) {
+  config: LitNodeClientConfig & {
+    bootstrapUrls: string[];
+  };
+  connectedNodes: Set<unknown>;
+  serverKeys: {};
+  ready: boolean;
+  subnetPubKey: string | null;
+  networkPubKey: string | null;
+  networkPubKeySet: string | null;
+
+  constructor(config: LitNodeClientConfig) {
     this.config = {
       alertWhenUnauthorized: true,
       minNodeCount: 6,
@@ -117,9 +76,10 @@ export default class LitNodeClient {
 
     try {
       if (typeof window !== "undefined" && window && window.localStorage) {
-        let configOverride = window.localStorage.getItem("LitNodeClientConfig");
+        let configOverride: string | LitNodeClientConfig =
+          window.localStorage.getItem("LitNodeClientConfig");
         if (configOverride) {
-          configOverride = JSON.parse(configOverride);
+          configOverride = JSON.parse(configOverride) as LitNodeClientConfig;
           this.config = { ...this.config, ...configOverride };
         }
       }
@@ -137,7 +97,13 @@ export default class LitNodeClient {
    * @param {string} params.chain The chain name of the chain that this contract is deployed on.  See LIT_CHAINS for currently supported chains.
    * @returns {Object} A signed JWT that proves the response to the function call is genuine. You may present this to a smart contract, or a server for authorization, and it can be verified using the verifyJwt function.
    */
-  async getSignedChainDataToken({ callRequests, chain }) {
+  async getSignedChainDataToken({
+    callRequests,
+    chain,
+  }: {
+    callRequests: CallRequest[];
+    chain: string;
+  }) {
     if (!this.ready) {
       throwError({
         message:

@@ -10,7 +10,7 @@ export const AUTH_SIGNATURE_BODY =
 
 function getProvider() {
   if ("keplr" in window) {
-    return keplr;
+    return window.keplr;
   } else {
     throwError({
       message:
@@ -21,7 +21,11 @@ function getProvider() {
   }
 }
 
-export async function connectCosmosProvider({ chain }) {
+export async function connectCosmosProvider({
+  chain,
+}: {
+  chain: keyof typeof LIT_COSMOS_CHAINS;
+}) {
   const chainId = LIT_COSMOS_CHAINS[chain].chainId;
 
   const keplr = getProvider();
@@ -51,7 +55,11 @@ export async function connectCosmosProvider({ chain }) {
   return { provider: keplr, account: accounts[0].address, chainId };
 }
 
-export async function checkAndSignCosmosAuthMessage({ chain }) {
+export async function checkAndSignCosmosAuthMessage({
+  chain,
+}: {
+  chain: keyof typeof LIT_COSMOS_CHAINS;
+}) {
   const { provider, account, chainId } = await connectCosmosProvider({ chain });
 
   let authSig = localStorage.getItem("lit-auth-cosmos-signature");

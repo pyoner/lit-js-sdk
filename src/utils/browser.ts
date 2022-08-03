@@ -8,8 +8,8 @@ import {
  * @param {File} file The file to turn into a data url
  * @returns {string} The data URL.  This is a string representation that can be used anywhere the original file would be used.
  */
-export function fileToDataUrl(file) {
-  return new Promise((resolve, reject) => {
+export function fileToDataUrl(file: File): Promise<string | ArrayBuffer> {
+  return new Promise((resolve) => {
     const reader = new FileReader();
     reader.onloadend = () => {
       resolve(reader.result);
@@ -26,8 +26,16 @@ export function fileToDataUrl(file) {
  * @param {string} params.mimetype The mime type of the file
  * @returns {string} The data URL.  This is a string representation that can be used anywhere the original file would be used.
  */
-export function downloadFile({ filename, data, mimetype }) {
-  var element = document.createElement("a");
+export function downloadFile({
+  filename,
+  data,
+  mimetype,
+}: {
+  filename: string;
+  data: Uint8Array;
+  mimetype: string;
+}) {
+  let element = document.createElement("a");
   element.setAttribute(
     "href",
     "data:" + mimetype + ";base64," + uint8arrayToString(data, "base64")
@@ -55,6 +63,11 @@ export function injectViewerIFrame({
   title,
   fileUrl,
   className,
+}: {
+  destinationId: string;
+  title: string;
+  fileUrl: string;
+  className: string;
 }) {
   if (fileUrl.includes("data:")) {
     // data urls are not safe, refuse to do this
@@ -73,9 +86,11 @@ export function injectViewerIFrame({
   const iframe = document.createElement("iframe");
   iframe.src = fileUrl;
   iframe.title = title;
-  iframe.sandbox =
-    "allow-forms allow-scripts allow-popups  allow-modals allow-popups-to-escape-sandbox allow-same-origin";
-  iframe.loading = "lazy";
+  iframe.setAttribute(
+    "sandbox",
+    "allow-forms allow-scripts allow-popups  allow-modals allow-popups-to-escape-sandbox allow-same-origin"
+  );
+  iframe.setAttribute("loading", "lazy");
   iframe.allow =
     "accelerometer; ambient-light-sensor; autoplay; battery; camera; display-capture; encrypted-media; fullscreen; geolocation; gyroscope; layout-animations; legacy-image-formats; magnetometer; microphone; midi; payment; picture-in-picture; publickey-credentials-get; sync-xhr; usb; vr; screen-wake-lock; web-share; xr-spatial-tracking";
   if (className) {

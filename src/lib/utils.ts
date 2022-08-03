@@ -1,12 +1,12 @@
 import { LIT_AUTH_SIG_CHAIN_KEYS } from "./constants.js";
 
-export const printError = (e) => {
+export const printError = (e: Error) => {
   console.log("Error Stack", e.stack);
   console.log("Error Name", e.name);
   console.log("Error Message", e.message);
 };
 
-export const mostCommonString = (arr) => {
+export const mostCommonString = (arr: string[]) => {
   return arr
     .sort(
       (a, b) =>
@@ -15,7 +15,15 @@ export const mostCommonString = (arr) => {
     .pop();
 };
 
-export const throwError = ({ message, name, errorCode }) => {
+export const throwError = ({
+  message,
+  name,
+  errorCode,
+}: {
+  message: string;
+  name: string;
+  errorCode: number | string;
+}) => {
   throw new (function () {
     this.message = message;
     this.name = name;
@@ -23,7 +31,7 @@ export const throwError = ({ message, name, errorCode }) => {
   })();
 };
 
-export const log = (...args) => {
+export const log = (...args: any[]) => {
   if (
     globalThis &&
     globalThis.litConfig &&
@@ -44,7 +52,7 @@ export const log = (...args) => {
  * @param { * } value
  * @returns { String } type
  */
-export const getVarType = (value) => {
+export const getVarType = <T = unknown>(value: T): string => {
   return Object.prototype.toString.call(value).slice(8, -1);
   // // if it's an object
   // if (value instanceof Object) {
@@ -70,13 +78,19 @@ export const getVarType = (value) => {
  * @param { boolean } throwOnError
  * @returns { Boolean } true/false
  */
-export const checkType = ({
+export const checkType = <T = unknown>({
   value,
   allowedTypes,
   paramName,
   functionName,
   throwOnError = true,
-}) => {
+}: {
+  value: T;
+  allowedTypes: string[];
+  paramName: string;
+  functionName: string;
+  throwOnError?: boolean;
+}): boolean => {
   if (!allowedTypes.includes(getVarType(value))) {
     let message = `Expecting ${allowedTypes.join(
       " or "
@@ -99,10 +113,10 @@ export const checkType = ({
   return true;
 };
 
-export const checkIfAuthSigRequiresChainParam = (
-  authSig,
-  chain,
-  functionName
+export const checkIfAuthSigRequiresChainParam = <T = unknown>(
+  authSig: Record<string, unknown>,
+  chain: T,
+  functionName: string
 ) => {
   for (const key of LIT_AUTH_SIG_CHAIN_KEYS) {
     if (key in authSig) {
@@ -112,7 +126,7 @@ export const checkIfAuthSigRequiresChainParam = (
 
   // if we're here, then we need the chain param
   if (
-    !checkType({
+    !checkType<T>({
       value: chain,
       allowedTypes: ["String"],
       paramName: "chain",
