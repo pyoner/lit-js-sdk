@@ -2,6 +2,7 @@
   "name": "lit-js-sdk",
   "version": "1.1.207",
   "description": "LIT Javascript SDK",
+  "type": "module",
   "source": "src/index.js",
   "main": "build/index.js",
   "scripts": {
