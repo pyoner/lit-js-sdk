@@ -1,33 +1,9 @@
-/**
- * @typedef {Object} LITChain
- * @property {string} vmType - Either EVM for an Ethereum compatible chain or SVM for a Solana compatible chain
- * @property {string} name - The human readable name of the chain
- */
-
-/**
- * @typedef {Object} LITEVMChain
- * @property {string} contractAddress - The address of the token contract for the optional predeployed ERC1155 contract.  Only present on EVM chains.
- * @property {string} chainId - The chain ID of the chain that this token contract is deployed on.  Used for EVM chains.
- * @property {string} name - The human readable name of the chain
- */
-
-/**
- * @typedef {Object} LITSVMChain
- * @property {string} name - The human readable name of the chain
- */
-
-/**
- * @typedef {Object} LITCosmosChain
- * @property {string} name - The human readable name of the chain
- */
+import { LITEVMChain, LITSVMChain, LITCosmosChain, LITChain } from "./types";
 
 /**
  * EVM Chains supported by the LIT protocol.  Each chain includes an optional pre-deployed token contract that you may use for minting LITs.  These are ERC1155 contracts that let you mint any quantity of a given token.  Use the chain name as a key in this object.
- * @constant
- * @type {LITEVMChain}
- * @default
  */
-export const LIT_CHAINS = {
+export const LIT_CHAINS: Record<string, LITEVMChain> = {
   ethereum: {
     contractAddress: "0xA54F7579fFb3F98bd8649fF02813F575f9b3d353",
     chainId: 1,
@@ -219,81 +195,78 @@ export const LIT_CHAINS = {
     type: "ERC1155",
     vmType: "EVM",
   },
-  aurora: {
-    contractAddress: null,
-    chainId: 1313161554,
-    name: "Aurora",
-    symbol: "ETH",
-    decimals: 18,
-    rpcUrls: ["https://mainnet.aurora.dev"],
-    blockExplorerUrls: ["https://aurorascan.dev"],
-    type: null,
-    vmType: "EVM",
-  },
-  eluvio: {
-    contractAddress: null,
-    chainId: 955305,
-    name: "Eluvio",
-    symbol: "ELV",
-    decimals: 18,
-    rpcUrls: ["https://host-76-74-28-226.contentfabric.io/eth"],
-    blockExplorerUrls: ["https://explorer.eluv.io"],
-    type: null,
-    vmType: "EVM",
-  },
-  alfajores: {
-    contractAddress: null,
-    chainId: 44787,
-    name: "Alfajores",
-    symbol: "CELO",
-    decimals: 18,
-    rpcUrls: ["https://alfajores-forno.celo-testnet.org"],
-    blockExplorerUrls: ["https://alfajores-blockscout.celo-testnet.org"],
-    type: null,
-    vmType: "EVM",
-  },
-  xdc: {
-    contractAddress: null,
-    chainId: 50,
-    name: "XDC Blockchain",
-    symbol: "XDC",
-    decimals: 18,
-    rpcUrls: ["https://rpc.xinfin.network"],
-    blockExplorerUrls: ["https://explorer.xinfin.network"],
-    type: null,
-    vmType: "EVM",
-  },
-  evmos: {
-    contractAddress: null,
-    chainId: 9001,
-    name: "EVMOS",
-    symbol: "EVMOS",
-    decimals: 18,
-    rpcUrls: ["https://eth.bd.evmos.org:8545"],
-    blockExplorerUrls: ["https://evm.evmos.org"],
-    type: null,
-    vmType: "EVM",
-  },
-  evmosTestnet: {
-    contractAddress: null,
-    chainId: 9000,
-    name: "EVMOS Testnet",
-    symbol: "EVMOS",
-    decimals: 18,
-    rpcUrls: ["https://eth.bd.evmos.dev:8545"],
-    blockExplorerUrls: ["https://evm.evmos.dev"],
-    type: null,
-    vmType: "EVM",
-  },
+  // aurora: {
+  //   contractAddress: null,
+  //   chainId: 1313161554,
+  //   name: "Aurora",
+  //   symbol: "ETH",
+  //   decimals: 18,
+  //   rpcUrls: ["https://mainnet.aurora.dev"],
+  //   blockExplorerUrls: ["https://aurorascan.dev"],
+  //   type: null,
+  //   vmType: "EVM",
+  // },
+  // eluvio: {
+  //   contractAddress: null,
+  //   chainId: 955305,
+  //   name: "Eluvio",
+  //   symbol: "ELV",
+  //   decimals: 18,
+  //   rpcUrls: ["https://host-76-74-28-226.contentfabric.io/eth"],
+  //   blockExplorerUrls: ["https://explorer.eluv.io"],
+  //   type: null,
+  //   vmType: "EVM",
+  // },
+  // alfajores: {
+  //   contractAddress: null,
+  //   chainId: 44787,
+  //   name: "Alfajores",
+  //   symbol: "CELO",
+  //   decimals: 18,
+  //   rpcUrls: ["https://alfajores-forno.celo-testnet.org"],
+  //   blockExplorerUrls: ["https://alfajores-blockscout.celo-testnet.org"],
+  //   type: null,
+  //   vmType: "EVM",
+  // },
+  // xdc: {
+  //   contractAddress: null,
+  //   chainId: 50,
+  //   name: "XDC Blockchain",
+  //   symbol: "XDC",
+  //   decimals: 18,
+  //   rpcUrls: ["https://rpc.xinfin.network"],
+  //   blockExplorerUrls: ["https://explorer.xinfin.network"],
+  //   type: null,
+  //   vmType: "EVM",
+  // },
+  // evmos: {
+  //   contractAddress: null,
+  //   chainId: 9001,
+  //   name: "EVMOS",
+  //   symbol: "EVMOS",
+  //   decimals: 18,
+  //   rpcUrls: ["https://eth.bd.evmos.org:8545"],
+  //   blockExplorerUrls: ["https://evm.evmos.org"],
+  //   type: null,
+  //   vmType: "EVM",
+  // },
+  // evmosTestnet: {
+  //   contractAddress: null,
+  //   chainId: 9000,
+  //   name: "EVMOS Testnet",
+  //   symbol: "EVMOS",
+  //   decimals: 18,
+  //   rpcUrls: ["https://eth.bd.evmos.dev:8545"],
+  //   blockExplorerUrls: ["https://evm.evmos.dev"],
+  //   type: null,
+  //   vmType: "EVM",
+  // },
 };
 
 /**
  * Solana Chains supported by the LIT protocol.  Use the chain name as a key in this object.
- * @constant
- * @type {LITSVMChain}
- * @default
  */
-export const LIT_SVM_CHAINS = {
+export const LIT_SVM_CHAINS: Record<string, LITSVMChain> = {
   solana: {
     name: "Solana",
     symbol: "SOL",
@@ -322,11 +295,8 @@ export const LIT_SVM_CHAINS = {
 
 /**
  * Cosmos Chains supported by the LIT protocol.  Use the chain name as a key in this object.
- * @constant
- * @type {LITCosmosChain}
- * @default
  */
-export const LIT_COSMOS_CHAINS = {
+export const LIT_COSMOS_CHAINS: Record<string, LITCosmosChain> = {
   cosmos: {
     name: "Cosmos",
     symbol: "ATOM",
@@ -367,11 +337,8 @@ export const LIT_COSMOS_CHAINS = {
 
 /**
  * All Chains supported by the LIT protocol.  Use the chain name as a key in this object.
- * @constant
- * @type {LITChain}
- * @default
  */
-export const ALL_LIT_CHAINS = {
+export const ALL_LIT_CHAINS: Record<string, LITChain> = {
   ...LIT_CHAINS,
   ...LIT_SVM_CHAINS,
   ...LIT_COSMOS_CHAINS,
