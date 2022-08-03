@@ -6,8 +6,10 @@ import {
   JsonRpcProvider,
 } from "@ethersproject/providers";
 import { toUtf8Bytes } from "@ethersproject/strings";
-import { hexlify } from "@ethersproject/bytes";
+import { BytesLike, hexlify } from "@ethersproject/bytes";
 import { getAddress } from "@ethersproject/address";
+import { Interface } from "@ethersproject/abi";
+
 import WalletConnectProvider from "@walletconnect/ethereum-provider";
 import LitConnectModal from "lit-connect-modal";
 import { SiweMessage } from "lit-siwe";
@@ -20,9 +22,10 @@ import ERC20 from "../abis/ERC20.json";
 import { LIT_CHAINS } from "../lib/constants";
 import { throwError, log } from "../lib/utils";
 
-function chainHexIdToChainName(chainHexId) {
-  for (let i = 0; i < Object.keys(LIT_CHAINS).length; i++) {
-    const chainName = Object.keys(LIT_CHAINS)[i];
+function chainHexIdToChainName(chainHexId: string) {
+  const keys = Object.keys(LIT_CHAINS);
+  for (let i = 0; i < keys.length; i++) {
+    const chainName = keys[i];
     const litChainHexId = "0x" + LIT_CHAINS[chainName].chainId.toString("16");
     if (litChainHexId === chainHexId) {
       return chainName;
@@ -30,14 +33,30 @@ function chainHexIdToChainName(chainHexId) {
   }
 }
 
-export function encodeCallData({ abi, functionName, functionParams }) {
-  const iface = new ethers.utils.Interface(abi);
+export function encodeCallData({
+  abi,
+  functionName,
+  functionParams,
+}: {
+  abi: string;
+  functionName: string;
+  functionParams: ReadonlyArray<any>;
+}) {
+  const iface = new Interface(abi);
   const callData = iface.encodeFunctionData(functionName, functionParams);
   return callData;
 }
 
-export function decodeCallResult({ abi, functionName, data }) {
-  const iface = new ethers.utils.Interface(abi);
+export function decodeCallResult({
+  abi,
+  functionName,
+  data,
+}: {
+  abi: string;
+  functionName: string;
+  data: BytesLike;
+}) {
+  const iface = new Interface(abi);
   const decoded = iface.decodeFunctionResult(functionName, data);
   return decoded;
 }
