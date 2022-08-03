@@ -15,6 +15,15 @@ export const mostCommonString = (arr: string[]) => {
     .pop();
 };
 
+export class LitError extends Error {
+  name: string;
+  errorCode: string;
+  constructor(message: string, name: string, errorCode: string) {
+    super(message);
+    this.name = name;
+    this.errorCode = errorCode;
+  }
+}
 export const throwError = ({
   message,
   name,
@@ -22,13 +31,9 @@ export const throwError = ({
 }: {
   message: string;
   name: string;
-  errorCode: number | string;
+  errorCode: string;
 }) => {
-  throw new (function () {
-    this.message = message;
-    this.name = name;
-    this.errorCode = errorCode;
-  })();
+  throw new LitError(message, name, errorCode);
 };
 
 export const log = (...args: any[]) => {
@@ -49,8 +54,6 @@ export const log = (...args: any[]) => {
  * eg Uint8Array instance should return 'Uint8Array` as string
  * or simply a `string` or `int` type
  *
- * @param { * } value
- * @returns { String } type
  */
 export const getVarType = <T = unknown>(value: T): string => {
   return Object.prototype.toString.call(value).slice(8, -1);
@@ -71,12 +74,6 @@ export const getVarType = <T = unknown>(value: T): string => {
  *  Check if the given value is the given type
  *  If not, throw `invalidParamType` error
  *
- * @param { * } value
- * @param { Array<String> } allowedTypes
- * @param { string } paramName
- * @param { string } functionName
- * @param { boolean } throwOnError
- * @returns { Boolean } true/false
  */
 export const checkType = <T = unknown>({
   value,
