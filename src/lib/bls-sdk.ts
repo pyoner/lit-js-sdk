@@ -69,7 +69,7 @@ function asciiToUint8Array(a: string): Uint8Array {
 }
 // https://stackoverflow.com/a/19102224
 // TODO resolve RangeError possibility here, see SO comments
-function uint8ArrayToAscii(a: string): Uint8Array {
+function uint8ArrayToAscii(a: Uint8Array): string {
   return String.fromCharCode.apply(null, a);
 }
 // https://stackoverflow.com/a/50868276
@@ -224,7 +224,7 @@ function getBase64Code(charCode: number): number {
   return code;
 }
 
-export function uint8ArrayToBase64(bytes): string {
+export function uint8ArrayToBase64(bytes: Uint8Array): string {
   let result = "",
     i,
     l = bytes.length;
@@ -250,7 +250,7 @@ export function uint8ArrayToBase64(bytes): string {
   return result;
 }
 
-export function base64ToUint8Array(str): Uint8Array {
+export function base64ToUint8Array(str: string): Uint8Array {
   if (str.length % 4 !== 0) {
     throw new Error("Unable to parse base64 string.");
   }

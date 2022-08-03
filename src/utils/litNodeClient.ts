@@ -25,7 +25,7 @@ import {
   canonicalResourceIdFormatter,
   canonicalUnifiedAccessControlConditionFormatter,
 } from "./crypto";
-import { CallRequest, LitNodeClientConfig } from "./types";
+import { CallRequest, LitNodeClientConfig } from "../types";
 
 /**
  * A LIT node client.  Connects directly to the LIT nodes to store and retrieve encryption keys and signing requests.  Only holders of an NFT that corresponds with a LIT may store and retrieve the keys.
