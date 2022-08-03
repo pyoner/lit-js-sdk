@@ -1,14 +1,11 @@
-import {
-  fromString as uint8arrayFromString,
-  toString as uint8arrayToString,
-} from "uint8arrays";
+import { toString as uint8arrayToString } from "uint8arrays";
 
 /**
  * Convert a file to a data URL, which could then be embedded in a LIT.  A data URL is a string representation of a file.
  * @param {File} file The file to turn into a data url
  * @returns {string} The data URL.  This is a string representation that can be used anywhere the original file would be used.
  */
-export function fileToDataUrl(file: File): Promise<string | ArrayBuffer> {
+export function fileToDataUrl(file: File): Promise<FileReader["result"]> {
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.onloadend = () => {
@@ -96,5 +93,5 @@ export function injectViewerIFrame({
   if (className) {
     iframe.className = className;
   }
-  document.getElementById(destinationId).appendChild(iframe);
+  document.getElementById(destinationId)?.appendChild(iframe);
 }
