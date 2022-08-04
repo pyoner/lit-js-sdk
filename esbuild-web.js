@@ -1,6 +1,6 @@
 const { build, analyzeMetafile } = require("esbuild");
 const { nodeBuiltIns } = require("esbuild-node-builtins");
-const { dedupBn } = require("./esbuild-plugins.js");
+const { dedupBn, wasmPlugin } = require("./esbuild-plugins.js");
 
 const go = async () => {
   let result = await build({
@@ -15,7 +15,7 @@ const go = async () => {
     },
     sourceRoot: "./",
     globalName: "LitJsSdk",
-    plugins: [nodeBuiltIns(), dedupBn],
+    plugins: [nodeBuiltIns(), dedupBn, wasmPlugin],
     define: { global: "window" },
     inject: ["./esbuild-web-shims.js"],
     metafile: true,
